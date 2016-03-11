@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_header_general">
+        <EditTextPreference
+            android:defaultValue="http://api.magnatit.ru"
+            android:key="ApiUrlBase"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_general_apiurlbase"/>
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="ApiKey"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_general_apikey"
+            android:summary="@string/pref_general_apikey_description"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
