@@ -15,10 +15,11 @@
  */
 package ru.magnatit.magnatit;
 
-import ru.magnatit.magnatit.camera.GraphicOverlay;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
+
+import ru.magnatit.magnatit.camera.GraphicOverlay;
 
 /**
  * Generic tracker which is used for tracking or reading a barcode (and can really be used for

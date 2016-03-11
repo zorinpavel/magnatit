@@ -42,14 +42,15 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import ru.magnatit.magnatit.camera.CameraSource;
-import ru.magnatit.magnatit.camera.CameraSourcePreview;
-import ru.magnatit.magnatit.camera.GraphicOverlay;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+
+import ru.magnatit.magnatit.camera.CameraSource;
+import ru.magnatit.magnatit.camera.CameraSourcePreview;
+import ru.magnatit.magnatit.camera.GraphicOverlay;
 
 /**
  * Activity for the multi-tracker app.  This app detects barcodes and displays the value with the
