@@ -6,7 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,27 +55,9 @@ public class ItemAdapter extends BaseAdapter {
         layoutInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setImage(Bitmap image) {
-        File photoFile;
-        try {
-            photoFile = createImageFile();
-
-            try {
-
-                FileOutputStream fos = new FileOutputStream(photoFile);
-                image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.close();
-
-                imageAdapter.partImages.put(imageAdapter.getCount(), mCurrentPhotoPath);
-                imageAdapter.changeModelList(imageAdapter.partImages);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (IOException ex) {
-            Log.e(TAG, "Error occurred while creating the File");
-        }
-
+    public void setImage() {
+        imageAdapter.partImages.put(imageAdapter.getCount(), mCurrentPhotoPath);
+        imageAdapter.changeModelList(imageAdapter.partImages);
     }
 
     public static File createImageFile() throws IOException {
@@ -162,7 +143,22 @@ public class ItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        Log.e(TAG, "Error occurred while creating the File");
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                    }
+                }
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
             }
         });
 

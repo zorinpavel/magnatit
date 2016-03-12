@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -60,6 +61,8 @@ public class MainActivity extends Activity {
 
                 } else {
                     Log.d(TAG, "No barcode captured, intent data is null");
+                    Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
+
                     // debug
                     Intent intent = new Intent(this, ItemActivity.class);
                     intent.putExtra("Barcode", "634798030");
