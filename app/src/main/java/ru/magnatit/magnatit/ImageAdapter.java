@@ -16,14 +16,12 @@ import java.util.Map;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     public Map<Integer, String> partImages;
-    public String P_Code;
 
     private static final String TAG = "BarcodeImageAdapter";
 
-    public ImageAdapter(Context c, String _P_Code, Map<Integer, String> _partImages) {
+    public ImageAdapter(Context c, Map<Integer, String> _partImages) {
         this.mContext = c;
         this.partImages = _partImages;
-        this.P_Code = _P_Code;
     }
 
     public int getCount() {
@@ -76,4 +74,8 @@ public class ImageAdapter extends BaseAdapter {
         return imageView;
     }
 
+    public void changeModelList(Map<Integer, String> _Images) {
+        this.partImages = _Images;
+        notifyDataSetChanged();
+    }
 }

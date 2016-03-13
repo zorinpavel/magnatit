@@ -57,7 +57,7 @@ public class ItemAdapter extends BaseAdapter {
     }
 
     public void setImage() {
-        imageAdapter.partImages.put(imageAdapter.getCount(), mCurrentPhotoPath);
+        partItem.Images.put(imageAdapter.getCount(), mCurrentPhotoPath);
         imageAdapter.notifyDataSetChanged();
     }
 
@@ -124,12 +124,12 @@ public class ItemAdapter extends BaseAdapter {
 //        });
 
         StaticGridView gridView = (StaticGridView) view.findViewById(R.id.ImagesGrid);
-        imageAdapter = new ImageAdapter(mContext, partItem.P_Code, partItem.Images);
+        imageAdapter = new ImageAdapter(mContext, partItem.Images);
         gridView.setAdapter(imageAdapter);
 
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView parent, View v, int position, long id) {
-                showOptionsMenu(position, partItem);
+                showOptionsMenu(position);
                 return true;
             }
         });
@@ -190,7 +190,7 @@ public class ItemAdapter extends BaseAdapter {
         return ((PartItem) getItem(position));
     }
 
-    public void showOptionsMenu(final int position, final PartItem partItem) {
+    public void showOptionsMenu(final int position) {
         new AlertDialog.Builder(mContext)
                 .setTitle("Удалить фотографию?")
                 .setCancelable(true)
@@ -201,7 +201,16 @@ public class ItemAdapter extends BaseAdapter {
                 })
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Log.d(TAG, String.valueOf(partItem.P_Code) + ":" + String.valueOf(position) + ":" + String.valueOf(id));
+                        Log.d(TAG, String.valueOf(partItem.P_Code) + ":" + String.valueOf(position) + ":" + String.valueOf(imageAdapter.getItem(position)));
+
+                        if ((String.valueOf(imageAdapter.getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
+                            File file = new File(String.valueOf(imageAdapter.getItem(position)));
+                            file.delete();
+                        } else {
+                            new DeleteImage().execute(String.valueOf(imageAdapter.getItem(position)));
+                        }
+                        partItem.Images.remove(position);
+                        imageAdapter.changeModelList(partItem.Images);
                     }
                 })
                 .show();
@@ -279,4 +288,53 @@ public class ItemAdapter extends BaseAdapter {
             }
         }
     }
+
+    private class DeleteImage extends AsyncTask<String, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setMessage("Deleting image...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(String... Arg) {
+            try {
+                Map<String, String> params = new HashMap<>();
+                params.put("P_Code", partItem.P_Code);
+                params.put("Image", Arg[0]);
+                jsonObj = Api.Post("Parts", "DeleteImage", params, null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+
+            try {
+                String Error = jsonObj.getString("Error");
+                if (Error.equals("1")) {
+                    JSONArray Errors = jsonObj.getJSONArray("Errors");
+                    for (int i = 0; i < Errors.length(); i++) {
+                        JSONObject ErrorText = Errors.getJSONObject(i);
+                        String ErrorValue = ErrorText.getString("Error");
+                        Api.showError(ErrorValue);
+                    }
+                } else {
+                    Log.d(TAG, "Image deleted");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

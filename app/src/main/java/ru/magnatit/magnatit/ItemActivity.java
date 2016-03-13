@@ -37,13 +37,8 @@ public class ItemActivity extends Activity {
     private ProgressDialog pDialog;
     private JSONObject jsonObj;
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int PLACE_BARCODE_CAPTURE = 2;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
+    static final int REQUEST_IMAGE_CAPTURE = 9002;
+    static final int PLACE_BARCODE_CAPTURE = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +107,10 @@ public class ItemActivity extends Activity {
         switch(requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if(resultCode == RESULT_OK)
-                    itemAdapter.setImage();
+                    if (data != null)
+                        itemAdapter.setImage();
+                    else
+                        Toast.makeText(this, "No image captured", Toast.LENGTH_SHORT).show();
                 break;
             case PLACE_BARCODE_CAPTURE:
                 if (resultCode == CommonStatusCodes.SUCCESS) {
@@ -120,17 +118,15 @@ public class ItemActivity extends Activity {
                         Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                         Log.d(TAG, "Barcode read: " + barcode.displayValue);
 
-//                    Intent intent = new Intent(this, ItemActivity.class);
-//                    intent.putExtra("Barcode", barcode.displayValue);
-//                    startActivity(intent);
+                        new GetPlace().execute(barcode.displayValue);
 
                     } else {
                         Log.d(TAG, "No barcode captured, intent data is null");
                         Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
 
                         // debugger
-                        String Barcode = GetDebugBarcode();
-                        new GetPlace().execute(Barcode);
+                        String barcode = GetDebugBarcode();
+                        new GetPlace().execute(barcode);
 
                     }
                 } else {
