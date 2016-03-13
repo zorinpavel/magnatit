@@ -16,6 +16,11 @@ public class PartItem {
     String CM_Name;
     Integer P_Value;
     String P_Original;
+    String St_Name;
+    String St_Code;
+    String R_Name;
+    String R_Code;
+    String Pl_Code;
     Map<Integer, String> Images = new HashMap<>();
 
     JSONObject Brand;
@@ -47,6 +52,18 @@ public class PartItem {
                 }
             }
             CM_Name = Model.getString("CM_Name");
+
+            JSONObject Storage = Item.getJSONObject("Storage");
+            St_Name = Storage.getString("St_Name");
+            St_Name = St_Name.equals("") ? "не указано" : St_Name;
+            St_Code = Storage.getString("St_Code");
+
+            R_Name = Storage.getString("R_Name");
+            R_Name = R_Name.equals("null") ? "" : R_Name;
+            R_Code = Storage.getString("R_Code");
+
+            Pl_Code = Storage.getString("Pl_Code");
+            Pl_Code = Pl_Code.equals("null") ? "" : Pl_Code;
 
             JSONArray PImages = Item.getJSONArray("Images");
             for (int im = 0; im < PImages.length(); im++) {

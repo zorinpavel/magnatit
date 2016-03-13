@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,8 +37,8 @@ public class ItemAdapter extends BaseAdapter {
     private Context mContext;
     LayoutInflater layoutInflater;
 
-    public static ArrayList<PartItem> partItems;
-    public static PartItem partItem;
+    public ArrayList<PartItem> partItems;
+    public PartItem partItem;
 
     public ImageAdapter imageAdapter;
     public static String mCurrentPhotoPath;
@@ -51,13 +52,13 @@ public class ItemAdapter extends BaseAdapter {
     ItemAdapter(Context c, ArrayList<PartItem> _partItems) {
         this.mContext = c;
         Api = new API(this.mContext);
-        partItems = _partItems;
+        this.partItems = _partItems;
         layoutInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void setImage() {
         imageAdapter.partImages.put(imageAdapter.getCount(), mCurrentPhotoPath);
-        imageAdapter.changeModelList(imageAdapter.partImages);
+        imageAdapter.notifyDataSetChanged();
     }
 
     public static File createImageFile() throws IOException {
@@ -80,13 +81,13 @@ public class ItemAdapter extends BaseAdapter {
     // кол-во элементов
     @Override
     public int getCount() {
-        return partItems.size();
+        return this.partItems.size();
     }
 
     // элемент по позиции
     @Override
     public Object getItem(int position) {
-        return partItems.get(position);
+        return this.partItems.get(position);
     }
 
     // id по позиции
@@ -110,6 +111,9 @@ public class ItemAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.CM_Name)).setText(partItem.CM_Name);
         ((TextView) view.findViewById(R.id.P_Value)).setText(String.valueOf(partItem.P_Value));
         ((TextView) view.findViewById(R.id.P_Original)).setText(partItem.P_Original);
+        ((TextView) view.findViewById(R.id.St_Name)).setText(partItem.St_Name);
+        ((TextView) view.findViewById(R.id.R_Name)).setText(partItem.R_Name);
+        ((TextView) view.findViewById(R.id.Pl_Code)).setText(partItem.Pl_Code);
 
 //        LinearLayout itemLine = (LinearLayout) view.findViewById(R.id.ItemLine);
 //        itemLine.setOnClickListener(new View.OnClickListener() {
@@ -157,8 +161,17 @@ public class ItemAdapter extends BaseAdapter {
                         ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
                     }
                 }
-//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        ImageButton itemPlace = (ImageButton) view.findViewById(R.id.ItemPlace);
+        itemPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, BarcodeCaptureActivity.class);
+                intent.putExtra("AutoFocus", true);
+
+                ((Activity) mContext).startActivityForResult(intent, ItemActivity.PLACE_BARCODE_CAPTURE);
             }
         });
 
@@ -218,6 +231,9 @@ public class ItemAdapter extends BaseAdapter {
                 params.put("P_Code", partItem.P_Code);
                 params.put("P_Value", String.valueOf(partItem.P_Value));
                 params.put("P_Original", partItem.P_Original);
+                params.put("St_Code", partItem.St_Code);
+                params.put("R_Code", partItem.R_Code);
+                params.put("Pl_Code", partItem.Pl_Code);
 
                 Boolean isPost = false;
                 for(int i = 0; i < partItem.Images.size(); i++) {
@@ -256,6 +272,7 @@ public class ItemAdapter extends BaseAdapter {
                     }
                 } else {
                     Log.d(TAG, "SAVED");
+                    Toast.makeText(mContext, "Сохранено", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

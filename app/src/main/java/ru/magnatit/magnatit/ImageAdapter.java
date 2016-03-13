@@ -26,11 +26,6 @@ public class ImageAdapter extends BaseAdapter {
         this.P_Code = _P_Code;
     }
 
-    public void changeModelList(Map<Integer, String> _partImages) {
-//        this.partImages = _partImages;
-        notifyDataSetChanged();
-    }
-
     public int getCount() {
         return this.partImages.size();
     }
