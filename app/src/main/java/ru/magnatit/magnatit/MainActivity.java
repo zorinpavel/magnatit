@@ -1,10 +1,14 @@
 package ru.magnatit.magnatit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +39,23 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences Settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String ApiUrlBase = Settings.getString("ApiUrlBase", null);
+        String ApiKey = Settings.getString("ApiKey", null);
+
+        if(ApiUrlBase == null || ApiKey == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Необъодимо установить ключ API и адрес сервера в настройках")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // do anything
+                        }
+                    }).setIcon(android.R.drawable.stat_notify_error);
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
 
 //        new GetKey().execute();
 

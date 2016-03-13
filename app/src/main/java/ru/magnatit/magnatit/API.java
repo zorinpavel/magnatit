@@ -8,14 +8,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -98,7 +97,7 @@ class API {
         try {
             jsonObj = new JSONObject(response.body().string());
         } catch (JSONException e) {
-            e.printStackTrace();
+            showError("Request error");
         }
 
         Log.d(TAG, String.valueOf(jsonObj));
@@ -123,7 +122,6 @@ class API {
     }
 
     public void showError(String message) {
-        Log.w(TAG + " (Error) ", message);
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage(message)
                 .setTitle("Response from server")
