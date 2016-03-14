@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -45,12 +44,13 @@ public class ItemActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
 
+        itemAdapter  = new ItemAdapter(this);
+
         Intent intent = getIntent();
         String Barcode = intent.getStringExtra("Barcode");
         if(Barcode != null) {
-            GetParts(Barcode);
+            new GetParts().execute(Barcode);
         }
-
     }
 
     private void ShuffleArray(String[] array) {
@@ -109,10 +109,7 @@ public class ItemActivity extends Activity {
                 if(resultCode == RESULT_OK)
                     if(itemAdapter == null)
                         Log.e(TAG, "itemAdapter IS NULL");
-                    if (data != null)
-                        itemAdapter.setImage();
-                    else
-                        Toast.makeText(this, "No image captured", Toast.LENGTH_SHORT).show();
+                    itemAdapter.setImage();
                 break;
             case PLACE_BARCODE_CAPTURE:
                 if (resultCode == CommonStatusCodes.SUCCESS) {
@@ -141,13 +138,7 @@ public class ItemActivity extends Activity {
         }
     }
 
-    public void GetParts(String Barcode) {
-        new GetParts().execute(Barcode);
-    }
-
     private class GetParts extends AsyncTask<String, Void, Void> {
-
-        ArrayList<PartItem> partItems = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
@@ -180,28 +171,30 @@ public class ItemActivity extends Activity {
                 pDialog.dismiss();
 
             try {
-                String Error = jsonObj.getString("Error");
-                if (Error.equals("1")) {
-                    JSONArray Errors = jsonObj.getJSONArray("Errors");
-                    for(int i = 0; i < Errors.length(); i++) {
-                        JSONObject ErrorText = Errors.getJSONObject(i);
-                        String ErrorValue = ErrorText.getString("Error");
-                        Api.showError(ErrorValue);
+                if(jsonObj != null) {
+                    String Error = jsonObj.getString("Error");
+                    if (Error.equals("1")) {
+                        JSONArray Errors = jsonObj.getJSONArray("Errors");
+                        for (int i = 0; i < Errors.length(); i++) {
+                            JSONObject ErrorText = Errors.getJSONObject(i);
+                            String ErrorValue = ErrorText.getString("Error");
+                            Api.showError(ErrorValue);
+                        }
+                    } else {
+
+                        JSONArray Items = jsonObj.getJSONArray("Items");
+
+                        for (int i = 0; i < Items.length(); i++) {
+                            JSONObject Item = Items.getJSONObject(i);
+                            itemAdapter.partItems.add(new PartItem(Item));
+                        }
+
+                        ListView itemsList = (ListView) findViewById(R.id.ItemsList);
+                        itemsList.setAdapter(itemAdapter);
+
                     }
-                } else {
-
-                    JSONArray Items = jsonObj.getJSONArray("Items");
-
-                    for(int i = 0; i < Items.length(); i++) {
-                        JSONObject Item = Items.getJSONObject(i);
-                        partItems.add(new PartItem(Item));
-                    }
-
-                    ListView itemsList = (ListView) findViewById(R.id.ItemsList);
-                    itemAdapter = new ItemAdapter(ItemActivity.this, partItems);
-                    itemsList.setAdapter(itemAdapter);
-
-                }
+                } else
+                    Api.showError("Неверный ответ сервера");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

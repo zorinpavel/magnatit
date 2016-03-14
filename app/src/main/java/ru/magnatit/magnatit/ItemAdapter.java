@@ -49,10 +49,11 @@ public class ItemAdapter extends BaseAdapter {
 
     private static final String TAG = "BarcodeItemAdapter";
 
-    ItemAdapter(Context c, ArrayList<PartItem> _partItems) {
+    ItemAdapter(Context c) {
         this.mContext = c;
         Api = new API(this.mContext);
-        this.partItems = _partItems;
+        partItems = new ArrayList<>();
+
         layoutInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -64,7 +65,7 @@ public class ItemAdapter extends BaseAdapter {
     public static File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -81,13 +82,13 @@ public class ItemAdapter extends BaseAdapter {
     // кол-во элементов
     @Override
     public int getCount() {
-        return this.partItems.size();
+        return partItems.size();
     }
 
     // элемент по позиции
     @Override
     public Object getItem(int position) {
-        return this.partItems.get(position);
+        return partItems.get(position);
     }
 
     // id по позиции
@@ -206,9 +207,8 @@ public class ItemAdapter extends BaseAdapter {
                         if ((String.valueOf(imageAdapter.getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
                             File file = new File(String.valueOf(imageAdapter.getItem(position)));
                             file.delete();
-                        } else {
-                            new DeleteImage().execute(String.valueOf(imageAdapter.getItem(position)));
                         }
+                        new DeleteImage().execute(String.valueOf(imageAdapter.getItem(position)));
                         partItem.Images.remove(position);
                         imageAdapter.changeModelList(partItem.Images);
                     }
@@ -248,8 +248,8 @@ public class ItemAdapter extends BaseAdapter {
                 for(int i = 0; i < partItem.Images.size(); i++) {
                     String imageName = partItem.Images.get(i);
                     if((String.valueOf(imageName)).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
-                        isPost = true;
                         jsonObj = Api.Post("Parts", "SetItem", params, imageName);
+                        isPost = true;
                     }
                 }
 
@@ -304,7 +304,7 @@ public class ItemAdapter extends BaseAdapter {
             try {
                 Map<String, String> params = new HashMap<>();
                 params.put("P_Code", partItem.P_Code);
-                params.put("Image", Arg[0]);
+                params.put("image", Arg[0]);
                 jsonObj = Api.Post("Parts", "DeleteImage", params, null);
             } catch (IOException e) {
                 e.printStackTrace();
