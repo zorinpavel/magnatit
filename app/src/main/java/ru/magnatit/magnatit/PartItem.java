@@ -4,8 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class PartItem {
 
@@ -21,7 +20,7 @@ public class PartItem {
     String R_Name;
     String R_Code;
     String Pl_Code;
-    Map<Integer, String> Images = new HashMap<>();
+    ArrayList Images = new ArrayList();
 
     JSONObject Brand;
     JSONObject Model;
@@ -67,7 +66,7 @@ public class PartItem {
 
             JSONArray PImages = Item.getJSONArray("Images");
             for (int im = 0; im < PImages.length(); im++) {
-                Images.put(im, PImages.getString(im));
+                Images.add(PImages.getString(im));
             }
         } catch (JSONException e) {
             e.printStackTrace();

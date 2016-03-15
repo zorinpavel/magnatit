@@ -50,15 +50,15 @@ public class ItemAdapter extends BaseAdapter {
     private static final String TAG = "BarcodeItemAdapter";
 
     ItemAdapter(Context c) {
-        this.mContext = c;
-        Api = new API(this.mContext);
+        mContext = c;
+        Api = new API(mContext);
         partItems = new ArrayList<>();
 
-        layoutInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void setImage() {
-        partItem.Images.put(imageAdapter.getCount(), mCurrentPhotoPath);
+        partItem.Images.add(mCurrentPhotoPath);
         imageAdapter.notifyDataSetChanged();
     }
 
@@ -202,15 +202,13 @@ public class ItemAdapter extends BaseAdapter {
                 })
                 .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Log.d(TAG, String.valueOf(partItem.P_Code) + ":" + String.valueOf(position) + ":" + String.valueOf(imageAdapter.getItem(position)));
-
                         if ((String.valueOf(imageAdapter.getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
                             File file = new File(String.valueOf(imageAdapter.getItem(position)));
                             file.delete();
                         }
                         new DeleteImage().execute(String.valueOf(imageAdapter.getItem(position)));
                         partItem.Images.remove(position);
-                        imageAdapter.changeModelList(partItem.Images);
+                        imageAdapter.notifyDataSetChanged();
                     }
                 })
                 .show();
@@ -246,7 +244,7 @@ public class ItemAdapter extends BaseAdapter {
 
                 Boolean isPost = false;
                 for(int i = 0; i < partItem.Images.size(); i++) {
-                    String imageName = partItem.Images.get(i);
+                    String imageName = (String) partItem.Images.get(i);
                     if((String.valueOf(imageName)).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
                         jsonObj = Api.Post("Parts", "SetItem", params, imageName);
                         isPost = true;
@@ -332,7 +330,7 @@ public class ItemAdapter extends BaseAdapter {
                     Log.d(TAG, "Image deleted");
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "No jsonObj");
             }
         }
     }

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -26,8 +27,9 @@ import okhttp3.Response;
 class API {
 
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
+
+    private final OkHttpClient client;
     public static String ApiUrlBase = null;
     private static String ApiKey = null;
     private String ApiUrlRequest = null;
@@ -37,7 +39,12 @@ class API {
     private static final String TAG = "BarcodeAPI";
 
     public API(Context c) {
-        this.mContext = c;
+        mContext = c;
+        client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
     public JSONObject Get(String ClassName, String MethodName) throws IOException {
@@ -49,7 +56,6 @@ class API {
         JSONObject jsonObj = null;
         getApiUrlRequest(ClassName, MethodName, params);
 
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(this.ApiUrlRequest)
                 .build();
@@ -60,7 +66,7 @@ class API {
         try {
             jsonObj = new JSONObject(response.body().string());
         } catch (JSONException e) {
-            e.printStackTrace();
+            showError("Api.Get server error");
         }
 
         Log.d(TAG, String.valueOf(jsonObj));
@@ -70,8 +76,6 @@ class API {
     public JSONObject Post(String ClassName, String MethodName, Map<String, String> postParams, String postFileName) throws IOException {
         JSONObject jsonObj = null;
         getApiUrlRequest(ClassName, MethodName, new HashMap<String, String>());
-
-        OkHttpClient client = new OkHttpClient();
 
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
@@ -97,7 +101,7 @@ class API {
         try {
             jsonObj = new JSONObject(response.body().string());
         } catch (JSONException e) {
-            showError("Request error");
+            showError("Api.Post server error");
         }
 
         Log.d(TAG, String.valueOf(jsonObj));
@@ -105,7 +109,7 @@ class API {
     }
 
     public void getApiUrlRequest(String ClassName, String MethodName, Map<String, String> params) {
-        SharedPreferences Settings = PreferenceManager.getDefaultSharedPreferences(this.mContext);
+        SharedPreferences Settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         ApiUrlBase = Settings.getString("ApiUrlBase", null);
         ApiKey = Settings.getString("ApiKey", null);
 

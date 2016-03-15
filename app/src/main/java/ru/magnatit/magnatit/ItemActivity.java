@@ -67,14 +67,12 @@ public class ItemActivity extends Activity {
 
     public String GetDebugBarcode() {
         String Barcodes[] = {
-                "barcode307690394", "barcode469097934", "barcode163148608",
-                "barcode315456211", "barcode964389481", "barcode400000259",
                 "barcode634798030"
         };
         String PlaceBarcodes[] = {
-                "place006"
+                "place006",
         };
-        ShuffleArray(Barcodes);
+        ShuffleArray(PlaceBarcodes);
 
         int resID = getResources().getIdentifier("icon", "drawable", getPackageName());
         for(String rndBarcode : PlaceBarcodes) {
@@ -171,30 +169,27 @@ public class ItemActivity extends Activity {
                 pDialog.dismiss();
 
             try {
-                if(jsonObj != null) {
-                    String Error = jsonObj.getString("Error");
-                    if (Error.equals("1")) {
-                        JSONArray Errors = jsonObj.getJSONArray("Errors");
-                        for (int i = 0; i < Errors.length(); i++) {
-                            JSONObject ErrorText = Errors.getJSONObject(i);
-                            String ErrorValue = ErrorText.getString("Error");
-                            Api.showError(ErrorValue);
-                        }
-                    } else {
-
-                        JSONArray Items = jsonObj.getJSONArray("Items");
-
-                        for (int i = 0; i < Items.length(); i++) {
-                            JSONObject Item = Items.getJSONObject(i);
-                            itemAdapter.partItems.add(new PartItem(Item));
-                        }
-
-                        ListView itemsList = (ListView) findViewById(R.id.ItemsList);
-                        itemsList.setAdapter(itemAdapter);
-
+                String Error = jsonObj.getString("Error");
+                if (Error.equals("1")) {
+                    JSONArray Errors = jsonObj.getJSONArray("Errors");
+                    for (int i = 0; i < Errors.length(); i++) {
+                        JSONObject ErrorText = Errors.getJSONObject(i);
+                        String ErrorValue = ErrorText.getString("Error");
+                        Api.showError(ErrorValue);
                     }
-                } else
-                    Api.showError("Неверный ответ сервера");
+                } else {
+
+                    JSONArray Items = jsonObj.getJSONArray("Items");
+
+                    for (int i = 0; i < Items.length(); i++) {
+                        JSONObject Item = Items.getJSONObject(i);
+                        itemAdapter.partItems.add(new PartItem(Item));
+                    }
+
+                    ListView itemsList = (ListView) findViewById(R.id.ItemsList);
+                    itemsList.setAdapter(itemAdapter);
+
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

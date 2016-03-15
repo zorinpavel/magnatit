@@ -48,31 +48,28 @@
             android:layout_height="wrap_content"
             android:text="@string/Storage_Text"
             android:id="@+id/textView3"
-            android:layout_weight="1" />
+            android:layout_weight="4" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/St_Name"
             android:id="@+id/St_Name"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1" />
+            android:layout_weight="4" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/R_Name"
             android:id="@+id/R_Name"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1" />
+            android:layout_weight="4" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Pl_Code"
             android:id="@+id/Pl_Code"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="2" />
+            android:layout_weight="4" />
     </LinearLayout>
 
     <LinearLayout

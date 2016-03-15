@@ -11,26 +11,26 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    public Map<Integer, String> partImages;
+    public ArrayList partImages;
 
     private static final String TAG = "BarcodeImageAdapter";
 
-    public ImageAdapter(Context c, Map<Integer, String> _partImages) {
-        this.mContext = c;
-        this.partImages = _partImages;
+    public ImageAdapter(Context c, ArrayList _partImages) {
+        mContext = c;
+        partImages = _partImages;
     }
 
     public int getCount() {
-        return this.partImages.size();
+        return partImages.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return this.partImages.get(position);
+        return partImages.get(position);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ImageAdapter extends BaseAdapter {
         int maxWidth = imageView.getWidth() < 300 ? 300 : imageView.getWidth();
         int maxHeight = imageView.getHeight() < 300 ? 300 : imageView.getHeight();
 
-        if((String.valueOf(getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
+        if ((String.valueOf(getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
             Log.d(TAG, "Local:" + position + ":" + String.valueOf(getItem(position)));
 
             Picasso.with(mContext)
@@ -74,8 +74,4 @@ public class ImageAdapter extends BaseAdapter {
         return imageView;
     }
 
-    public void changeModelList(Map<Integer, String> _Images) {
-        this.partImages = _Images;
-        notifyDataSetChanged();
-    }
 }
