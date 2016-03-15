@@ -105,8 +105,6 @@ public class ItemActivity extends Activity {
         switch(requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if(resultCode == RESULT_OK)
-                    if(itemAdapter == null)
-                        Log.e(TAG, "itemAdapter IS NULL");
                     itemAdapter.setImage();
                 break;
             case PLACE_BARCODE_CAPTURE:

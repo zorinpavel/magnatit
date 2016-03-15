@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -58,6 +59,7 @@ public class ItemAdapter extends BaseAdapter {
     }
 
     public void setImage() {
+        // TODO check if file exists
         partItem.Images.add(mCurrentPhotoPath);
         imageAdapter.notifyDataSetChanged();
     }
@@ -147,21 +149,44 @@ public class ItemAdapter extends BaseAdapter {
         itemAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
-                    // Create the File where the photo should go
+
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                if (photoPickerIntent.resolveActivity(mContext.getPackageManager()) != null) {
                     File photoFile = null;
                     try {
                         photoFile = createImageFile();
                     } catch (IOException ex) {
                         Log.e(TAG, "Error occurred while creating the File");
                     }
-                    // Continue only if the File was successfully created
                     if (photoFile != null) {
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                        photoPickerIntent.setType("image/*");
+                        photoPickerIntent.putExtra("crop", "true");
+                        photoPickerIntent.putExtra("outputX", 880); // imageprevew 900
+                        photoPickerIntent.putExtra("outputY", 660);
+                        photoPickerIntent.putExtra("aspectX", 1);
+                        photoPickerIntent.putExtra("aspectY", 1);
+                        photoPickerIntent.putExtra("scale", true);
+                        photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                        ((Activity) mContext).startActivityForResult(photoPickerIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
                     }
                 }
+
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+//                    // Create the File where the photo should go
+//                    File photoFile = null;
+//                    try {
+//                        photoFile = createImageFile();
+//                    } catch (IOException ex) {
+//                        Log.e(TAG, "Error occurred while creating the File");
+//                    }
+//                    // Continue only if the File was successfully created
+//                    if (photoFile != null) {
+//                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+//                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+//                    }
+//                }
             }
         });
 

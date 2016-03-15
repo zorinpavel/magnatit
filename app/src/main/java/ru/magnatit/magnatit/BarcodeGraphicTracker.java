@@ -15,6 +15,9 @@
  */
 package ru.magnatit.magnatit;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -42,6 +45,12 @@ class BarcodeGraphicTracker extends Tracker<Barcode> {
     @Override
     public void onNewItem(int id, Barcode item) {
         mGraphic.setId(id);
+
+        Intent data = new Intent();
+        data.putExtra(BarcodeCaptureActivity.BarcodeObject, item.rawValue);
+        ActivitySource.caller.setResult(Activity.RESULT_OK, data);
+        ActivitySource.caller.finish();
+        ActivitySource.caller = null;
     }
 
     /**
