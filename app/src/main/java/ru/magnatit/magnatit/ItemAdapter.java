@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +68,46 @@ public class ItemAdapter extends BaseAdapter {
         imageAdapter.notifyDataSetChanged();
     }
 
+    public void cropImage() {
+        Intent photoCropIntent = new Intent("com.android.camera.action.CROP");
+        if (photoCropIntent.resolveActivity(mContext.getPackageManager()) != null) {
+            photoCropIntent.setType("image/*");
+            photoCropIntent.setData(Uri.parse(mCurrentPhotoPath));
+            photoCropIntent.putExtra("outputX", 880);
+            photoCropIntent.putExtra("outputY", 660);
+            photoCropIntent.putExtra("aspectX", 88);
+            photoCropIntent.putExtra("aspectY", 66);
+            photoCropIntent.putExtra("scale", true);
+            photoCropIntent.putExtra("return-data", false);
+            ((Activity) mContext).startActivityForResult(photoCropIntent, ItemActivity.REQUEST_IMAGE_CROP);
+        } else {
+            resizeImage();
+            setImage();
+        }
+    }
+
+    private void resizeImage() {
+        int targetW = 880, targetH = 660;
+        Bitmap old = BitmapFactory.decodeFile(mCurrentPhotoPath);
+        Bitmap bmp = Bitmap.createScaledBitmap(old, targetW, targetH, true);
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(mCurrentPhotoPath);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -77,7 +121,6 @@ public class ItemAdapter extends BaseAdapter {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, mCurrentPhotoPath);
         return image;
     }
 
@@ -118,13 +161,31 @@ public class ItemAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.R_Name)).setText(partItem.R_Name);
         ((TextView) view.findViewById(R.id.Pl_Code)).setText(partItem.Pl_Code);
 
-//        LinearLayout itemLine = (LinearLayout) view.findViewById(R.id.ItemLine);
-//        itemLine.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, String.valueOf(partItem.P_Code));
-//            }
-//        });
+        final TextView mWearDesc = (TextView) view.findViewById(R.id.P_WearDesc);
+        mWearDesc.setText(partItem.P_WearDesc);
+
+        final CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.P_Wear_checkBox);
+        if(partItem.P_Wear > 0) {
+            mCheckBox.setChecked(true);
+            mCheckBox.setText(String.format("%s %d%%", mContext.getString(R.string.P_Wear_checkBox_Text), partItem.P_Wear));
+        }
+        else
+            mCheckBox.setChecked(false);
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mCheckBox.isChecked()) {
+                    Integer newWear = (partItem.P_Wear > 0 ? partItem.P_Wear : 10);
+                    partItem.P_Wear = newWear;
+                    mCheckBox.setText(String.format("%s %d%%", mContext.getString(R.string.P_Wear_checkBox_Text), newWear));
+                    mWearDesc.setText(String.format("%s\r\n%s", mContext.getString(R.string.P_WearDesc_Default), mWearDesc.getText().toString()));
+                } else {
+                    partItem.P_Wear = 0;
+                    mCheckBox.setText(R.string.P_Wear_checkBox_Text);
+                    mWearDesc.setText(partItem.P_WearDesc);
+                }
+            }
+        });
 
         StaticGridView gridView = (StaticGridView) view.findViewById(R.id.ImagesGrid);
         imageAdapter = new ImageAdapter(mContext, partItem.Images);
@@ -150,43 +211,56 @@ public class ItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if (photoPickerIntent.resolveActivity(mContext.getPackageManager()) != null) {
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        Log.e(TAG, "Error occurred while creating the File");
+                final CharSequence[] items = { "Камера", "Выбрать из галереи", "Cancel" };
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.add_photos);
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == 0) {
+                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+                                File photoFile = null;
+                                try {
+                                    photoFile = createImageFile();
+                                } catch (IOException ex) {
+                                    Log.e(TAG, "Error occurred while creating the File");
+                                }
+                                if (photoFile != null) {
+                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                                    takePictureIntent.putExtra("return-data", false);
+                                    ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                                }
+                            }
+                        } else if (item == 1) {
+                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            if (photoPickerIntent.resolveActivity(mContext.getPackageManager()) != null) {
+                                File photoFile = null;
+                                try {
+                                    photoFile = createImageFile();
+                                } catch (IOException ex) {
+                                    Log.e(TAG, "Error occurred while creating the File");
+                                }
+                                if (photoFile != null) {
+                                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                                    photoPickerIntent.setType("image/*");
+                                    photoPickerIntent.putExtra("crop", "true");
+                                    photoPickerIntent.putExtra("outputX", 880); // imageprevew 900
+                                    photoPickerIntent.putExtra("outputY", 660);
+                                    photoPickerIntent.putExtra("aspectX", 88);
+                                    photoPickerIntent.putExtra("aspectY", 66);
+                                    photoPickerIntent.putExtra("scale", true);
+                                    photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                                    photoPickerIntent.putExtra("return-data", false);
+                                    ((Activity) mContext).startActivityForResult(photoPickerIntent, ItemActivity.REQUEST_IMAGE_PICK);
+                                }
+                            }
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
                     }
-                    if (photoFile != null) {
-                        photoPickerIntent.setType("image/*");
-                        photoPickerIntent.putExtra("crop", "true");
-                        photoPickerIntent.putExtra("outputX", 880); // imageprevew 900
-                        photoPickerIntent.putExtra("outputY", 660);
-                        photoPickerIntent.putExtra("aspectX", 1);
-                        photoPickerIntent.putExtra("aspectY", 1);
-                        photoPickerIntent.putExtra("scale", true);
-                        photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                        ((Activity) mContext).startActivityForResult(photoPickerIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
-                    }
-                }
-
-//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
-//                    // Create the File where the photo should go
-//                    File photoFile = null;
-//                    try {
-//                        photoFile = createImageFile();
-//                    } catch (IOException ex) {
-//                        Log.e(TAG, "Error occurred while creating the File");
-//                    }
-//                    // Continue only if the File was successfully created
-//                    if (photoFile != null) {
-//                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-//                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
-//                    }
-//                }
+                });
+                builder.show();
             }
         });
 
@@ -250,6 +324,9 @@ public class ItemAdapter extends BaseAdapter {
             EditText pOriginalInput = (EditText) ((Activity) mContext).findViewById(R.id.P_Original);
             partItem.P_Original = pOriginalInput.getText().toString();
 
+            EditText pWearDescInput = (EditText) ((Activity) mContext).findViewById(R.id.P_WearDesc);
+            partItem.P_WearDesc = pWearDescInput.getText().toString();
+
             pDialog = new ProgressDialog(mContext);
             pDialog.setMessage("Save part...");
             pDialog.setCancelable(false);
@@ -266,12 +343,16 @@ public class ItemAdapter extends BaseAdapter {
                 params.put("St_Code", partItem.St_Code);
                 params.put("R_Code", partItem.R_Code);
                 params.put("Pl_Code", partItem.Pl_Code);
+                params.put("P_Wear", String.valueOf(partItem.P_Wear));
+                params.put("P_WearDesc", partItem.P_WearDesc);
 
                 Boolean isPost = false;
                 for(int i = 0; i < partItem.Images.size(); i++) {
                     String imageName = (String) partItem.Images.get(i);
                     if((String.valueOf(imageName)).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
                         jsonObj = Api.Post("Parts", "SetItem", params, imageName);
+                        File file = new File(String.valueOf(imageName));
+                        file.delete();
                         isPost = true;
                     }
                 }

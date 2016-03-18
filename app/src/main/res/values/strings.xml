@@ -18,9 +18,12 @@
     <string name="St_Name">St_Name</string>
     <string name="R_Name">R_Name</string>
     <string name="Pl_Code">Pl_Code</string>
+    <string name="P_WearDesc_Text">Описание износа</string>
+    <string name="P_Wear_checkBox_Text">Износ</string>
+    <string name="P_WearDesc_Default">Износ смотри на фотографиях</string>
 
     <string name="title_activity_settings">Настройки</string>
-    <string name="add_photos">Добавить фотографий</string>
+    <string name="add_photos">Добавить фотографии</string>
     <string name="ItemPlace_Text">Место хранения</string>
     <string name="save">Сохранить</string>
 

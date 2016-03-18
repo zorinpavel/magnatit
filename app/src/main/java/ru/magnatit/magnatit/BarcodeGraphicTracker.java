@@ -15,9 +15,12 @@
  */
 package ru.magnatit.magnatit;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -46,9 +49,13 @@ class BarcodeGraphicTracker extends Tracker<Barcode> {
     public void onNewItem(int id, Barcode item) {
         mGraphic.setId(id);
 
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(ActivitySource.caller, notification);
+        r.play();
+
         Intent data = new Intent();
-        data.putExtra(BarcodeCaptureActivity.BarcodeObject, item.rawValue);
-        ActivitySource.caller.setResult(Activity.RESULT_OK, data);
+        data.putExtra(BarcodeCaptureActivity.BarcodeObject, item);
+        ActivitySource.caller.setResult(CommonStatusCodes.SUCCESS, data);
         ActivitySource.caller.finish();
         ActivitySource.caller = null;
     }

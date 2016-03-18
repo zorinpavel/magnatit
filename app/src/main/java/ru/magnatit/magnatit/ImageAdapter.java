@@ -2,7 +2,6 @@ package ru.magnatit.magnatit;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -52,7 +51,6 @@ public class ImageAdapter extends BaseAdapter {
         int maxHeight = imageView.getHeight() < 300 ? 300 : imageView.getHeight();
 
         if ((String.valueOf(getItem(position))).contains(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)))) {
-            Log.d(TAG, "Local:" + position + ":" + String.valueOf(getItem(position)));
 
             Picasso.with(mContext)
                     .load("file://" + String.valueOf(getItem(position)))
@@ -61,7 +59,6 @@ public class ImageAdapter extends BaseAdapter {
                     .placeholder(android.R.drawable.ic_menu_gallery)
                     .into(imageView);
         } else {
-            Log.d(TAG, "Server:" + position + ":" + String.valueOf(getItem(position)));
 
             Picasso.with(mContext)
                     .load(API.ApiUrlBase + "/imagepreview/android" + getItem(position))

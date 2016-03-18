@@ -20,6 +20,8 @@ public class PartItem {
     String R_Name;
     String R_Code;
     String Pl_Code;
+    Integer P_Wear;
+    String P_WearDesc;
     ArrayList Images = new ArrayList();
 
     JSONObject Brand;
@@ -34,6 +36,9 @@ public class PartItem {
             P_Value = Integer.parseInt(Item.getString("P_Value"));
             P_Original = Item.getString("P_Original");
             P_Original = P_Original.equals("null") ? "" : P_Original;
+            P_Wear = Integer.parseInt(Item.getString("P_Wear"));
+            P_WearDesc = Item.getString("P_WearDesc");
+            P_WearDesc = P_WearDesc.equals("null") ? "" : P_WearDesc;
 
             JSONArray Brands = Item.getJSONArray("P_Brands");
             for (int b = 0; b < Brands.length(); b++) {

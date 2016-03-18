@@ -37,6 +37,8 @@ public class ItemActivity extends Activity {
     private JSONObject jsonObj;
 
     static final int REQUEST_IMAGE_CAPTURE = 9002;
+    static final int REQUEST_IMAGE_PICK = 9003;
+    static final int REQUEST_IMAGE_CROP = 9004;
     static final int PLACE_BARCODE_CAPTURE = 9001;
 
     @Override
@@ -104,6 +106,11 @@ public class ItemActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case REQUEST_IMAGE_CAPTURE:
+                if(resultCode == RESULT_OK)
+                    itemAdapter.cropImage();
+                break;
+            case REQUEST_IMAGE_PICK:
+            case REQUEST_IMAGE_CROP:
                 if(resultCode == RESULT_OK)
                     itemAdapter.setImage();
                 break;

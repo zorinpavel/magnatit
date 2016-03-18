@@ -116,6 +116,27 @@
             android:selectAllOnFocus="true" />
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/P_Wear_checkBox_Text"
+            android:id="@+id/P_Wear_checkBox" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/P_WearDesc"
+            android:hint="@string/P_WearDesc_Text" />
+    </LinearLayout>
+
     <ru.magnatit.magnatit.StaticGridView
         android:id="@+id/ImagesGrid"
         android:layout_width="match_parent"
