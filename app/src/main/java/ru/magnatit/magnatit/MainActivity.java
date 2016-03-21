@@ -83,12 +83,6 @@ public class MainActivity extends Activity {
                 } else {
                     Log.d(TAG, "No barcode captured, intent data is null");
                     Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
-
-                    // debug
-                    Intent intent = new Intent(this, ItemActivity.class);
-                    intent.putExtra(BarcodeCaptureActivity.BarcodeObject, "634990658");
-                    startActivity(intent);
-
                 }
             } else {
                 Log.d(TAG, String.valueOf(resultCode));

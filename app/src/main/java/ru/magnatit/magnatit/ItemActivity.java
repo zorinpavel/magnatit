@@ -3,19 +3,14 @@ package ru.magnatit.magnatit;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +19,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class ItemActivity extends Activity {
 
@@ -55,53 +49,6 @@ public class ItemActivity extends Activity {
         }
     }
 
-    private void ShuffleArray(String[] array) {
-        int index;
-        String temp;
-        Random random = new Random();
-        for (int i = array.length - 1; i > 0; i--) {
-            index = random.nextInt(i + 1);
-            temp = array[index];
-            array[index] = array[i];
-            array[i] = temp;
-        }
-    }
-
-    public String GetDebugBarcode() {
-        String Barcodes[] = {
-                "barcode634990658"
-        };
-        String PlaceBarcodes[] = {
-                "place006",
-        };
-        ShuffleArray(PlaceBarcodes);
-
-        int resID = getResources().getIdentifier("icon", "drawable", getPackageName());
-        for(String rndBarcode : PlaceBarcodes) {
-            resID = getResources().getIdentifier(rndBarcode , "drawable", getPackageName());
-            break;
-        }
-
-        Bitmap myBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), resID);
-        BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.CODE_128)
-                .build();
-
-        if(!detector.isOperational()){
-            Log.d(TAG, "Could not set up the detector!");
-            return null;
-        }
-
-        Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
-        SparseArray<Barcode> detectedBarcodes = detector.detect(frame);
-
-        int key = detectedBarcodes.keyAt(0);
-        Barcode objBarcode = detectedBarcodes.get(key);
-
-        Log.d(TAG, objBarcode.rawValue);
-        return objBarcode.rawValue;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
@@ -125,11 +72,6 @@ public class ItemActivity extends Activity {
                     } else {
                         Log.d(TAG, "No barcode captured, intent data is null");
                         Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
-
-                        // debugger
-                        String barcode = GetDebugBarcode();
-                        new GetPlace().execute(barcode);
-
                     }
                 } else {
                     Log.d(TAG, String.valueOf(resultCode));
