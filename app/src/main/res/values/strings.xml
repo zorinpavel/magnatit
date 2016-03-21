@@ -20,7 +20,7 @@
     <string name="Pl_Code">Pl_Code</string>
     <string name="P_WearDesc_Text">Описание износа</string>
     <string name="P_Wear_checkBox_Text">Износ</string>
-    <string name="P_WearDesc_Default">Износ смотри на фотографиях</string>
+    <string name="P_WearDesc_Default">Внимание!!! запчасть имеет дефект, смотрите фотографии</string>
 
     <string name="title_activity_settings">Настройки</string>
     <string name="add_photos">Добавить фотографии</string>

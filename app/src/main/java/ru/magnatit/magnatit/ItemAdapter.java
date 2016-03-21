@@ -211,56 +211,72 @@ public class ItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                final CharSequence[] items = { "Камера", "Выбрать из галереи", "Cancel" };
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle(R.string.add_photos);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == 0) {
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
-                                File photoFile = null;
-                                try {
-                                    photoFile = createImageFile();
-                                } catch (IOException ex) {
-                                    Log.e(TAG, "Error occurred while creating the File");
-                                }
-                                if (photoFile != null) {
-                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                                    takePictureIntent.putExtra("return-data", false);
-                                    ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
-                                }
-                            }
-                        } else if (item == 1) {
-                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            if (photoPickerIntent.resolveActivity(mContext.getPackageManager()) != null) {
-                                File photoFile = null;
-                                try {
-                                    photoFile = createImageFile();
-                                } catch (IOException ex) {
-                                    Log.e(TAG, "Error occurred while creating the File");
-                                }
-                                if (photoFile != null) {
-                                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                                    photoPickerIntent.setType("image/*");
-                                    photoPickerIntent.putExtra("crop", "true");
-                                    photoPickerIntent.putExtra("outputX", 880); // imageprevew 900
-                                    photoPickerIntent.putExtra("outputY", 660);
-                                    photoPickerIntent.putExtra("aspectX", 88);
-                                    photoPickerIntent.putExtra("aspectY", 66);
-                                    photoPickerIntent.putExtra("scale", true);
-                                    photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                                    photoPickerIntent.putExtra("return-data", false);
-                                    ((Activity) mContext).startActivityForResult(photoPickerIntent, ItemActivity.REQUEST_IMAGE_PICK);
-                                }
-                            }
-                        } else if (items[item].equals("Cancel")) {
-                            dialog.dismiss();
-                        }
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        Log.e(TAG, "Error occurred while creating the File");
                     }
-                });
-                builder.show();
+                    if (photoFile != null) {
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        takePictureIntent.putExtra("return-data", false);
+                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                    }
+                }
+
+//                final CharSequence[] items = { "Камера", "Выбрать из галереи", "Cancel" };
+//                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+//                builder.setTitle(R.string.add_photos);
+//                builder.setItems(items, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int item) {
+//                        if (item == 0) {
+//                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                            if (takePictureIntent.resolveActivity(mContext.getPackageManager()) != null) {
+//                                File photoFile = null;
+//                                try {
+//                                    photoFile = createImageFile();
+//                                } catch (IOException ex) {
+//                                    Log.e(TAG, "Error occurred while creating the File");
+//                                }
+//                                if (photoFile != null) {
+//                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+//                                    takePictureIntent.putExtra("return-data", false);
+//                                    ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+//                                }
+//                            }
+//                        } else if (item == 1) {
+//                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                            if (photoPickerIntent.resolveActivity(mContext.getPackageManager()) != null) {
+//                                File photoFile = null;
+//                                try {
+//                                    photoFile = createImageFile();
+//                                } catch (IOException ex) {
+//                                    Log.e(TAG, "Error occurred while creating the File");
+//                                }
+//                                if (photoFile != null) {
+//                                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+//                                    photoPickerIntent.setType("image/*");
+//                                    photoPickerIntent.putExtra("crop", "true");
+//                                    photoPickerIntent.putExtra("outputX", 880); // imageprevew 900
+//                                    photoPickerIntent.putExtra("outputY", 660);
+//                                    photoPickerIntent.putExtra("aspectX", 88);
+//                                    photoPickerIntent.putExtra("aspectY", 66);
+//                                    photoPickerIntent.putExtra("scale", true);
+//                                    photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+//                                    photoPickerIntent.putExtra("return-data", false);
+//                                    ((Activity) mContext).startActivityForResult(photoPickerIntent, ItemActivity.REQUEST_IMAGE_PICK);
+//                                }
+//                            }
+//                        } else if (items[item].equals("Cancel")) {
+//                            dialog.dismiss();
+//                        }
+//                    }
+//                });
+//                builder.show();
+
             }
         });
 
@@ -305,6 +321,7 @@ public class ItemAdapter extends BaseAdapter {
                             File file = new File(String.valueOf(imageAdapter.getItem(position)));
                             file.delete();
                         }
+                        // TODO check path for local files it does not deleted from server if you have already save it
                         new DeleteImage().execute(String.valueOf(imageAdapter.getItem(position)));
                         partItem.Images.remove(position);
                         imageAdapter.notifyDataSetChanged();

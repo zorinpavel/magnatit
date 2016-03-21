@@ -36,7 +36,7 @@ public class PartItem {
             P_Value = Integer.parseInt(Item.getString("P_Value"));
             P_Original = Item.getString("P_Original");
             P_Original = P_Original.equals("null") ? "" : P_Original;
-            P_Wear = Integer.parseInt(Item.getString("P_Wear"));
+            P_Wear = Item.getString("P_Wear").equals("null") ? 0 : Integer.parseInt(Item.getString("P_Wear"));
             P_WearDesc = Item.getString("P_WearDesc");
             P_WearDesc = P_WearDesc.equals("null") ? "" : P_WearDesc;
 

@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
 
                     // debug
                     Intent intent = new Intent(this, ItemActivity.class);
-                    intent.putExtra(BarcodeCaptureActivity.BarcodeObject, "634798030");
+                    intent.putExtra(BarcodeCaptureActivity.BarcodeObject, "634990658");
                     startActivity(intent);
 
                 }

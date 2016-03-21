@@ -69,7 +69,7 @@ public class ItemActivity extends Activity {
 
     public String GetDebugBarcode() {
         String Barcodes[] = {
-                "barcode634798030"
+                "barcode634990658"
         };
         String PlaceBarcodes[] = {
                 "place006",
