@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.magnatit.magnatit"
     android:installLocation="auto" >
+    android:versionCode="4"
+    android:versionName="1.3.1">
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="21" />
+        android:minSdkVersion="21"
+        android:targetSdkVersion="23" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -44,7 +46,7 @@
         <activity
             android:name=".BarcodeCaptureActivity"
             android:label="Read barcode"
-            android:theme="@style/Theme.AppCompat.CompactMenu"/>
+            android:theme="@style/Theme.AppCompat"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
