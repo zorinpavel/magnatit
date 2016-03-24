@@ -30,11 +30,6 @@ public class ItemActivity extends Activity {
     private ProgressDialog pDialog;
     private JSONObject jsonObj;
 
-    static final int REQUEST_IMAGE_CAPTURE = 9002;
-    static final int REQUEST_IMAGE_PICK = 9003;
-    static final int REQUEST_IMAGE_CROP = 9004;
-    static final int PLACE_BARCODE_CAPTURE = 9001;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,34 +39,32 @@ public class ItemActivity extends Activity {
 
         Intent intent = getIntent();
         String Barcode = intent.getStringExtra("Barcode");
-        if(Barcode != null) {
+        if(Barcode != null)
             new GetParts().execute(Barcode);
-        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
+            case MainActivity.REQUEST_IMAGE_CAPTURE:
                 if(resultCode == RESULT_OK)
                     itemAdapter.cropImage();
                 break;
-            case REQUEST_IMAGE_PICK:
-            case REQUEST_IMAGE_CROP:
+            case MainActivity.REQUEST_IMAGE_PICK:
+            case MainActivity.REQUEST_IMAGE_CROP:
                 if(resultCode == RESULT_OK)
                     itemAdapter.setImage();
                 break;
-            case PLACE_BARCODE_CAPTURE:
+            case MainActivity.REQUEST_ITEM_PLACE_BARCODE_CAPTURE:
                 if (resultCode == CommonStatusCodes.SUCCESS) {
                     if (data != null) {
                         Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                        Log.d(TAG, "Barcode read: " + barcode.displayValue);
 
                         new GetPlace().execute(barcode.displayValue);
 
                     } else {
-                        Log.d(TAG, "No barcode captured, intent data is null");
-                        Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.noBarcodeCaptured, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.d(TAG, String.valueOf(resultCode));

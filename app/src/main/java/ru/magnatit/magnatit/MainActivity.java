@@ -27,8 +27,14 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
 
-    private static final int RC_BARCODE_CAPTURE = 9001;
     private static final String TAG = "BarcodeMain";
+    static final int REQUEST_ITEM_BARCODE_CAPTURE = 1;
+    static final int REQUEST_ITEM_PLACE_BARCODE_CAPTURE = 2;
+    static final int REQUEST_IMAGE_CAPTURE = 3;
+    static final int REQUEST_IMAGE_PICK = 4;
+    static final int REQUEST_IMAGE_CROP = 5;
+    static final int REQUEST_PLACE_BARCODE_CAPTURE = 6;
+
 
     private ProgressDialog pDialog;
 
@@ -65,30 +71,62 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra("AutoFocus", true);
 
-        startActivityForResult(intent, RC_BARCODE_CAPTURE);
+        if (BuildConfig.DEBUG) {
+            Intent intentDebug = new Intent(this, ItemActivity.class);
+            intentDebug.putExtra("Barcode", "711887747");
+            startActivity(intentDebug);
+        } else
+            startActivityForResult(intent, REQUEST_ITEM_BARCODE_CAPTURE);
+    }
+
+    public void newPlaceClick(View v) {
+        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
+        intent.putExtra("AutoFocus", true);
+
+        if (BuildConfig.DEBUG) {
+            Intent intentDebug = new Intent(this, ItemsListActivity.class);
+            intentDebug.putExtra("Barcode", "KOM L1 15");
+            startActivity(intentDebug);
+        } else
+            startActivityForResult(intent, REQUEST_PLACE_BARCODE_CAPTURE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_BARCODE_CAPTURE) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
+        switch(requestCode) {
+            case REQUEST_ITEM_BARCODE_CAPTURE:
+                if (resultCode == CommonStatusCodes.SUCCESS) {
+                    if (data != null) {
+                        Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
 
-                    Intent intent = new Intent(this, ItemActivity.class);
-                    intent.putExtra("Barcode", barcode.displayValue);
-                    startActivity(intent);
+                        Intent intent = new Intent(this, ItemActivity.class);
+                        intent.putExtra("Barcode", barcode.displayValue);
+                        startActivity(intent);
 
-                } else {
-                    Log.d(TAG, "No barcode captured, intent data is null");
-                    Toast.makeText(this, "No barcode captured", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, R.string.noBarcodeCaptured, Toast.LENGTH_SHORT).show();
+
+                    }
                 }
-            } else {
-                Log.d(TAG, String.valueOf(resultCode));
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+                break;
+            case REQUEST_PLACE_BARCODE_CAPTURE:
+                if (resultCode == CommonStatusCodes.SUCCESS) {
+                    if (data != null) {
+                        Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+
+                        Intent intent = new Intent(this, ItemsListActivity.class);
+                        intent.putExtra("Barcode", barcode.displayValue);
+                        startActivity(intent);
+
+                    } else {
+                        Toast.makeText(this, R.string.noBarcodeCaptured, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
 
     }

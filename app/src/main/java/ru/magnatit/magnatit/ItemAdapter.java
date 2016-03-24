@@ -79,7 +79,7 @@ public class ItemAdapter extends BaseAdapter {
             photoCropIntent.putExtra("aspectY", 66);
             photoCropIntent.putExtra("scale", true);
             photoCropIntent.putExtra("return-data", false);
-            ((Activity) mContext).startActivityForResult(photoCropIntent, ItemActivity.REQUEST_IMAGE_CROP);
+            ((Activity) mContext).startActivityForResult(photoCropIntent, MainActivity.REQUEST_IMAGE_CROP);
         } else {
             resizeImage();
             setImage();
@@ -124,19 +124,16 @@ public class ItemAdapter extends BaseAdapter {
         return image;
     }
 
-    // кол-во элементов
     @Override
     public int getCount() {
         return partItems.size();
     }
 
-    // элемент по позиции
     @Override
     public Object getItem(int position) {
         return partItems.get(position);
     }
 
-    // id по позиции
     @Override
     public long getItemId(int position) {
         return position;
@@ -171,6 +168,7 @@ public class ItemAdapter extends BaseAdapter {
         }
         else
             mCheckBox.setChecked(false);
+
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -222,7 +220,7 @@ public class ItemAdapter extends BaseAdapter {
                     if (photoFile != null) {
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                         takePictureIntent.putExtra("return-data", false);
-                        ((Activity) mContext).startActivityForResult(takePictureIntent, ItemActivity.REQUEST_IMAGE_CAPTURE);
+                        ((Activity) mContext).startActivityForResult(takePictureIntent, MainActivity.REQUEST_IMAGE_CAPTURE);
                     }
                 }
 
@@ -236,7 +234,7 @@ public class ItemAdapter extends BaseAdapter {
                 Intent intent = new Intent(mContext, BarcodeCaptureActivity.class);
                 intent.putExtra("AutoFocus", true);
 
-                ((Activity) mContext).startActivityForResult(intent, ItemActivity.PLACE_BARCODE_CAPTURE);
+                ((Activity) mContext).startActivityForResult(intent, MainActivity.REQUEST_ITEM_PLACE_BARCODE_CAPTURE);
             }
         });
 

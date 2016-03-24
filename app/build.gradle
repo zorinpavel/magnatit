@@ -8,8 +8,8 @@ android {
         applicationId "ru.magnatit.magnatit"
         minSdkVersion 21
         targetSdkVersion 23
-        versionName '1.2'
-        versionCode 1
+        versionName '1.3'
+        versionCode 3
     }
     buildTypes {
         release {

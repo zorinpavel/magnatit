@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +69,7 @@ class API {
             showError("Api.Get server error");
         }
 
+        Log.d(TAG, String.valueOf(jsonObj));
         return jsonObj;
     }
 
@@ -102,6 +104,7 @@ class API {
             showError("Api.Post server error");
         }
 
+        Log.d(TAG, String.valueOf(jsonObj));
         return jsonObj;
     }
 
@@ -117,6 +120,9 @@ class API {
         for (Map.Entry entry : params.entrySet()) {
             this.ApiUrlRequest = this.ApiUrlRequest + "&" + entry.getKey() + "=" + entry.getValue();
         }
+
+        if(BuildConfig.DEBUG)
+            Log.d(TAG, this.ApiUrlRequest);
 
     }
 

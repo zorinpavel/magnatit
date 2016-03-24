@@ -2,10 +2,15 @@
     <string name="app_name">Magnatit.ru</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="low_storage_error">Не достаточно места на накопителе</string>
+
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
-    <string name="newBarcodeButtonValue">Считать штрихкод</string>
+
+    <string name="newBarcodeButtonValue">Найти по штрихкоду</string>
+    <string name="newPlaceButtonValue">Найти по месту хранения</string>
+    <string name="noBarcodeCaptured">Штрихкод не считан</string>
+
     <string name="P_Barcode">P_Barcode</string>
     <string name="P_Name">P_Name</string>
     <string name="CB_Name">CB_Name</string>
@@ -23,6 +28,9 @@
     <string name="P_WearDesc_Default">Внимание!!! запчасть имеет дефект, смотрите фотографии</string>
 
     <string name="title_activity_settings">Настройки</string>
+    <string name="title_activity_item">По штрихкоду</string>
+    <string name="title_activity_list">По месту хранения</string>
+
     <string name="add_photos">Добавить фотографии</string>
     <string name="ItemPlace_Text">Место хранения</string>
     <string name="save">Сохранить</string>

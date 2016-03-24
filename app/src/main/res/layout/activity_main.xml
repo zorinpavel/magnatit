@@ -6,13 +6,28 @@
     tools:context="ru.magnatit.magnatit.MainActivity"
     android:padding="16dp">
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/newBarcodeButtonValue"
-        android:id="@+id/newBarcodeButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="newBarcodeClick" />
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true">-->
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/newBarcodeButtonValue"
+            android:id="@+id/newBarcodeButton"
+            android:onClick="newBarcodeClick"
+            android:layout_alignParentBottom="true" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/newPlaceButtonValue"
+            android:id="@+id/newPlaceButton"
+            android:onClick="newPlaceClick"
+            android:layout_alignParentTop="true" />
+
+    <!--</LinearLayout>-->
 
 </RelativeLayout>
