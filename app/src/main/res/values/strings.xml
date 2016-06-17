@@ -13,6 +13,7 @@
 
     <string name="P_Barcode">P_Barcode</string>
     <string name="P_Name">P_Name</string>
+    <string name="P_Price">P_Price</string>
     <string name="CB_Name">CB_Name</string>
     <string name="CM_Name">CM_Name</string>
     <string name="P_Value_Text">Количество:</string>

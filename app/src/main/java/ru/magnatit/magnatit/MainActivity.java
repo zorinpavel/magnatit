@@ -70,6 +70,7 @@ public class MainActivity extends Activity {
     public void newBarcodeClick(View v) {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra("AutoFocus", true);
+        intent.putExtra("UseFlash", true);
 
         if (BuildConfig.DEBUG) {
             Intent intentDebug = new Intent(this, ItemActivity.class);
@@ -82,6 +83,7 @@ public class MainActivity extends Activity {
     public void newPlaceClick(View v) {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra("AutoFocus", true);
+        intent.putExtra("UseFlash", true);
 
         if (BuildConfig.DEBUG) {
             Intent intentDebug = new Intent(this, ItemsListActivity.class);

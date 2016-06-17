@@ -11,6 +11,7 @@ public class PartItem {
     String P_Code;
     String P_Barcode;
     String P_Name;
+    String P_Price;
     String CB_Name;
     String CM_Name;
     Integer P_Value;
@@ -33,6 +34,7 @@ public class PartItem {
             P_Code = Item.getString("P_Code");
             P_Barcode = Item.getString("P_Barcode");
             P_Name = Item.getString("P_Name");
+            P_Price = Item.getString("P_Price");
             P_Value = Integer.parseInt(Item.getString("P_Value"));
             P_Original = Item.getString("P_Original");
             P_Original = P_Original.equals("null") ? "" : P_Original;

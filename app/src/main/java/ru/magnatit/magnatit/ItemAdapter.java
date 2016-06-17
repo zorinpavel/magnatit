@@ -150,6 +150,7 @@ public class ItemAdapter extends BaseAdapter {
 
         ((TextView) view.findViewById(R.id.P_Barcode)).setText(partItem.P_Barcode);
         ((TextView) view.findViewById(R.id.P_Name)).setText(partItem.P_Name);
+        ((TextView) view.findViewById(R.id.P_Price)).setText(partItem.P_Price);
         ((TextView) view.findViewById(R.id.CB_Name)).setText(partItem.CB_Name);
         ((TextView) view.findViewById(R.id.CM_Name)).setText(partItem.CM_Name);
         ((TextView) view.findViewById(R.id.P_Value)).setText(String.valueOf(partItem.P_Value));
@@ -233,6 +234,7 @@ public class ItemAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, BarcodeCaptureActivity.class);
                 intent.putExtra("AutoFocus", true);
+                intent.putExtra("UseFlash", true);
 
                 ((Activity) mContext).startActivityForResult(intent, MainActivity.REQUEST_ITEM_PLACE_BARCODE_CAPTURE);
             }
@@ -282,8 +284,8 @@ public class ItemAdapter extends BaseAdapter {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            EditText pValueInput = (EditText) ((Activity) mContext).findViewById(R.id.P_Value);
-            partItem.P_Value = Integer.parseInt(pValueInput.getText().toString(), 10);
+//            EditText pValueInput = (EditText) ((Activity) mContext).findViewById(R.id.P_Value);
+//            partItem.P_Value = Integer.parseInt(pValueInput.getText().toString(), 10);
 
             EditText pOriginalInput = (EditText) ((Activity) mContext).findViewById(R.id.P_Original);
             partItem.P_Original = pOriginalInput.getText().toString();
@@ -302,7 +304,7 @@ public class ItemAdapter extends BaseAdapter {
             try {
                 Map<String, String> params = new HashMap<>();
                 params.put("P_Code", partItem.P_Code);
-                params.put("P_Value", String.valueOf(partItem.P_Value));
+//                params.put("P_Value", String.valueOf(partItem.P_Value));
                 params.put("P_Original", partItem.P_Original);
                 params.put("St_Code", partItem.St_Code);
                 params.put("R_Code", partItem.R_Code);

@@ -40,7 +40,7 @@ public class ItemsListActivity extends ListActivity {
     }
 
     @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
+    protected void onListItemClick(ListView l, View v, int position, long id) {
         PartItem partItem = itemsListAdapter.getPart(position);
         Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra("Barcode", partItem.P_Barcode);
